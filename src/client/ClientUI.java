@@ -1,12 +1,13 @@
 package client;
 
-import sun.nio.ch.Net;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
  * Created by Artem on 28.04.16.
@@ -15,7 +16,13 @@ public class ClientUI extends JFrame {
 
     JButton fileName;
     JLabel fileLabel;
-    InputData inputFile;
+    JLabel controlNumLabel;
+    JTextField controlNum;
+    JButton sendButton;
+
+    InputData inputFile = null;
+
+    int num=0;
 
     public ClientUI(){
 
@@ -46,7 +53,7 @@ public class ClientUI extends JFrame {
         gbc.gridy = 0;
         pane.add(fileLabel, gbc);
 
-        fileName = new JButton("Указать файл");
+        fileName = new JButton("Исходный файл");
         gbc.weightx = 0;
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -67,12 +74,87 @@ public class ClientUI extends JFrame {
             }
         });
 
+        controlNumLabel = new JLabel("Искомое количество букв в слове");
+        gbc.weightx = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        pane.add(controlNumLabel, gbc);
+
+        controlNum = new JTextField();
+        gbc.weightx = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        pane.add(controlNum, gbc);
+
+        sendButton = new JButton("Отправить");
+        gbc.weightx = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        pane.add(sendButton, gbc);
+
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+
+                    num = Integer.parseInt(controlNum.getText().toString());
+
+                } catch (Exception ex){
+
+                    controlNum.setText("Неправильно введено число или неуказан файл.");
+
+                }
+
+                if((num<1)||(inputFile == null)){
+
+                    controlNum.setText("Неправильно введено число или неуказан файл.");
+
+                } else{
+
+                    send();
+
+                }
+
+            }
+        });
 
     }
 
     public void send(){
 
+        try(Socket serverSocket = new Socket(InetAddress.getLocalHost(), 50000)) {
 
+            System.out.println("Connection  succes.");
+
+            OutputStream serverStream = serverSocket.getOutputStream();
+            DataOutputStream serverDataStream = new DataOutputStream(serverStream);
+
+            serverDataStream.writeUTF(inputFile.getInputFile());
+            serverDataStream.write(num);
+
+            System.out.println("File send.");
+
+            InputStream clientStream = serverSocket.getInputStream();
+            DataInputStream din = new DataInputStream(clientStream);
+
+            System.out.println("Ready for input.");
+
+            String res = din.readUTF();
+
+            System.out.println(res);
+
+        } catch (UnknownHostException e) {
+
+            e.printStackTrace();
+            System.out.println("Connection failed.");
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            System.out.println("Input error.");
+
+        }
 
     }
 
