@@ -1,6 +1,7 @@
 package server;
 
 import java.io.*;
+import java.net.InterfaceAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -12,11 +13,57 @@ public class ServerLauncher {
     public static void main(String[] args) {
 
         Socket client = null;
+        Socket clientNum = null;
         System.out.println("Server started.");
 
         String result;
+        String controlNum = "5";
 
         ServerWorker worker;
+
+        /*try(ServerSocket serverSocket = new ServerSocket(50001)){
+
+            try {
+
+                clientNum = serverSocket.accept();
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+
+            System.out.println("Client connected.");
+
+            InputStream in = clientNum.getInputStream();
+            DataInputStream din = new DataInputStream(in);
+
+            controlNum = din.readUTF();
+
+            System.out.println("Control number read.");
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+
+        finally {
+
+            try {
+
+                if (clientNum != null) {
+
+                    clientNum.close();
+
+                }
+
+            } catch (Exception ex) {
+
+                ex.printStackTrace();
+
+            }
+        }*/
 
         try {
 
@@ -26,7 +73,7 @@ public class ServerLauncher {
 
             }
 
-            System.out.println("Client connected");
+            System.out.println("Client connected.");
 
             InputStream in = client.getInputStream();
             DataInputStream din = new DataInputStream(in);
@@ -34,13 +81,16 @@ public class ServerLauncher {
             System.out.println("Create complete.");
 
             String message = din.readUTF();
-            int controlNum = din.readInt();
 
-            worker = new ServerWorker(message);
+            System.out.println("Message read.");
+
+            worker = new ServerWorker(message, 5);
 
             System.out.println("Worker begin.");
 
-            result = worker.work(controlNum);
+            int controlNumber = Integer.parseInt(controlNum);
+
+            result = worker.work();
 
             OutputStream out = client.getOutputStream();
             DataOutputStream dataOutputStream = new DataOutputStream(out);

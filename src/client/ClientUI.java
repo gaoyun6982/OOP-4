@@ -123,15 +123,39 @@ public class ClientUI extends JFrame {
 
     public void send(){
 
+        /*try(Socket serverSocket = new Socket(InetAddress.getLocalHost(), 50000)){
+
+            OutputStream serverStream = serverSocket.getOutputStream();
+            DataOutputStream serverDataStream = new DataOutputStream(serverStream);
+
+            System.out.println("Connection for number succes.");
+
+            serverDataStream.write(num);
+            serverDataStream.flush();
+
+            System.out.println("Number send");
+
+        } catch (UnknownHostException e) {
+
+            e.printStackTrace();
+            System.out.println("Connection failed.");
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            System.out.println("Input error.");
+
+        }*/
+
         try(Socket serverSocket = new Socket(InetAddress.getLocalHost(), 50000)) {
 
-            System.out.println("Connection  succes.");
+            System.out.println("Connection for message succes.");
 
             OutputStream serverStream = serverSocket.getOutputStream();
             DataOutputStream serverDataStream = new DataOutputStream(serverStream);
 
             serverDataStream.writeUTF(inputFile.getInputFile());
-            serverDataStream.write(num);
+            serverDataStream.flush();
 
             System.out.println("File send.");
 

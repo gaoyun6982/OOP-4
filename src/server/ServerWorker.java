@@ -9,41 +9,48 @@ public class ServerWorker {
 
     int i=0, i1=0;
     int num=0;
-    int result;
 
     char[] stream;
+    char[] out;
 
-    public ServerWorker(String input){
+    public ServerWorker(String input, int num){
 
         stream = new char[input.length()];
+        out = new char[input.length()];
         input.getChars(0, input.length(), stream, 0);
+        System.out.println(stream);
+        System.out.println(stream.length);
+        this.num = num;
 
     }
 
-    public String work(int controlNum){
+    public String work(){
 
-        while(stream[i] != '\0'){
+        while(i < stream.length){
 
-            if(stream[i]>40){
+            if(num>0){
 
-                num++;
+                if((stream[i]>47)&&(stream[i]<58)){
 
-            } else {
+                    num--;
+                    out[i1]=stream[i];
+                    i1++;
 
-                i1 = num;
-                num=0;
-
-            }
-            if(i1 == controlNum) {
-
-                result++;
-                i1=0;
+                }
 
             }
+
+            System.out.println("Cycle. "+i);
+            i++;
 
         }
+        outString = "Found numbers: ";
 
-        outString = "Found "+result+" words with length "+controlNum;
+        for(int j=0; j<i1; j++){
+
+            outString += out[j];
+
+        }
 
         return outString;
 
