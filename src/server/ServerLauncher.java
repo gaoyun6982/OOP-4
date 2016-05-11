@@ -12,6 +12,8 @@ public class ServerLauncher {
 
     public static void main(String[] args) {
 
+        //qwe
+
         Socket client = null;
         System.out.println("Server started.");
 
