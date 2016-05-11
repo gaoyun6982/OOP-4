@@ -19,18 +19,18 @@ public class ServerWorker {
         out = new char[input.length()];
         input.getChars(0, input.length(), stream, 0);
         System.out.println(stream);
-        System.out.println(stream.length);
+        //System.out.println(stream.length);
         this.num = num;
 
     }
 
     public String work(){
 
-        while(i < stream.length){
+        while(i+1 < stream.length){
 
             if(num>0){
 
-                if((stream[i]>47)&&(stream[i]<58)){
+                if((stream[i]>47)&&(stream[i]<58)&&(stream[i+1]==' ')){
 
                     num--;
                     out[i1]=stream[i];
@@ -40,10 +40,11 @@ public class ServerWorker {
 
             }
 
-            System.out.println("Cycle. "+i);
             i++;
 
         }
+
+        System.out.println("Cycles: "+i);
         outString = "Found numbers: ";
 
         for(int j=0; j<i1; j++){

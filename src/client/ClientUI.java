@@ -22,7 +22,7 @@ public class ClientUI extends JFrame {
 
     InputData inputFile = null;
 
-    int num=0;
+    int num = 10;
 
     public ClientUI(){
 
@@ -74,7 +74,7 @@ public class ClientUI extends JFrame {
             }
         });
 
-        controlNumLabel = new JLabel("Искомое количество букв в слове");
+        controlNumLabel = new JLabel("Искомое количество цифр в файле");
         gbc.weightx = 0;
         gbc.gridx = 1;
         gbc.gridy = 2;
@@ -123,30 +123,6 @@ public class ClientUI extends JFrame {
 
     public void send(){
 
-        /*try(Socket serverSocket = new Socket(InetAddress.getLocalHost(), 50000)){
-
-            OutputStream serverStream = serverSocket.getOutputStream();
-            DataOutputStream serverDataStream = new DataOutputStream(serverStream);
-
-            System.out.println("Connection for number succes.");
-
-            serverDataStream.write(num);
-            serverDataStream.flush();
-
-            System.out.println("Number send");
-
-        } catch (UnknownHostException e) {
-
-            e.printStackTrace();
-            System.out.println("Connection failed.");
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-            System.out.println("Input error.");
-
-        }*/
-
         try(Socket serverSocket = new Socket(InetAddress.getLocalHost(), 50000)) {
 
             System.out.println("Connection for message succes.");
@@ -155,6 +131,15 @@ public class ClientUI extends JFrame {
             DataOutputStream serverDataStream = new DataOutputStream(serverStream);
 
             serverDataStream.writeUTF(inputFile.getInputFile());
+
+            byte[] numb = new byte[4];
+            for(int j = 3; j>=0; j--){
+                numb[j] = (byte) (num % 256);
+                num >>= 8;
+            }
+
+            serverDataStream.write(numb, 0, 4);
+
             serverDataStream.flush();
 
             System.out.println("File send.");
@@ -167,6 +152,16 @@ public class ClientUI extends JFrame {
             String res = din.readUTF();
 
             System.out.println(res);
+
+            File resultFile = new File("/Users/Artem/Desktop/result.txt");
+
+            if(!resultFile.exists()){
+                resultFile.createNewFile();
+            }
+
+            PrintWriter printWriter = new PrintWriter(resultFile.getAbsoluteFile());
+            printWriter.print(res);
+            printWriter.close();
 
         } catch (UnknownHostException e) {
 

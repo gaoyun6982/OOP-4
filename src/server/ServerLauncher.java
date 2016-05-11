@@ -13,57 +13,12 @@ public class ServerLauncher {
     public static void main(String[] args) {
 
         Socket client = null;
-        Socket clientNum = null;
         System.out.println("Server started.");
 
         String result;
         String controlNum = "5";
 
         ServerWorker worker;
-
-        /*try(ServerSocket serverSocket = new ServerSocket(50001)){
-
-            try {
-
-                clientNum = serverSocket.accept();
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-
-            }
-
-            System.out.println("Client connected.");
-
-            InputStream in = clientNum.getInputStream();
-            DataInputStream din = new DataInputStream(in);
-
-            controlNum = din.readUTF();
-
-            System.out.println("Control number read.");
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-        finally {
-
-            try {
-
-                if (clientNum != null) {
-
-                    clientNum.close();
-
-                }
-
-            } catch (Exception ex) {
-
-                ex.printStackTrace();
-
-            }
-        }*/
 
         try {
 
@@ -82,13 +37,22 @@ public class ServerLauncher {
 
             String message = din.readUTF();
 
-            System.out.println("Message read.");
+            byte[] buffer = new byte[4];
+            din.read(buffer, 0, 4);
 
-            worker = new ServerWorker(message, 5);
+            int num = 0;
+            for(int j=0; j<4; j++){
+                num <<= 8;
+                num += ((256 + buffer[j]) % 256);
+            }
+
+            System.out.println("Message read.\nNum = "+num);
+
+            worker = new ServerWorker(message, num);
 
             System.out.println("Worker begin.");
 
-            int controlNumber = Integer.parseInt(controlNum);
+            //int controlNumber = Integer.parseInt(controlNum);
 
             result = worker.work();
 
